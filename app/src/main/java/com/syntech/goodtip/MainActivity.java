@@ -260,12 +260,9 @@ public class MainActivity extends AppCompatActivity implements OnKeyboardVisibil
                 final AlertDialog dialog = mBuilder.create();
                 dialog.show();
 
-                ///
-
-                //Populate NumberPicker values from minimum and maximum value range
-                //Set the minimum value of NumberPicker
                 picker1.setMinValue(0);
                 picker2.setMinValue(minTip+1);
+
                 //Specify the maximum value/number of NumberPicker
                 picker1.setMaxValue(maxTip-1);
                 picker2.setMaxValue(100);
@@ -278,8 +275,6 @@ public class MainActivity extends AppCompatActivity implements OnKeyboardVisibil
                 picker2.setValue(maxTip);
 
                 tip_range.setText(getTipText(picker1.getValue(),picker2.getValue()));
-
-                ///
 
                 picker1.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
                     @Override
@@ -358,7 +353,6 @@ public class MainActivity extends AppCompatActivity implements OnKeyboardVisibil
                 boolean isShown = heightDiff >= estimatedKeyboardHeight;
 
                 if (isShown == alreadyOpen) {
-                    Log.i("Keyboard state", "Ignoring global layout change...");
                     return;
                 }
                 alreadyOpen = isShown;
