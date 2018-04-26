@@ -23,6 +23,7 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -42,7 +43,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements OnKeyboardVisibilityListener, OnStartDragListener {
+public class MainActivity extends AppCompatActivity implements /*OnKeyboardVisibilityListener,*/ OnStartDragListener {
 
     static RecyclerView recyclerView;
     static EditText subTotal;
@@ -155,9 +156,23 @@ public class MainActivity extends AppCompatActivity implements OnKeyboardVisibil
             }
         });
 
+        subTotal.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                subTotal.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        subTotal.setSelection(subTotal.getText().length());
+                    }
+                });
+                return false;
+            }
+        });
+
         addRating.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                subTotal.clearFocus();
 
                 final AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
                 View mView = getLayoutInflater().inflate(R.layout.add_rating, null);
@@ -243,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements OnKeyboardVisibil
 
         subTotal.setOnEditorActionListener(new DoneOnEditorActionListener());
 
-        setKeyboardVisibilityListener(this);
+        //setKeyboardVisibilityListener(this);
 
         tipRangeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -336,6 +351,7 @@ public class MainActivity extends AppCompatActivity implements OnKeyboardVisibil
         return String.valueOf(a) + "% - " + String.valueOf(b) + "%";
     }
 
+    /*
     private void setKeyboardVisibilityListener(final OnKeyboardVisibilityListener onKeyboardVisibilityListener) {
         final View parentView = ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
         parentView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -360,6 +376,7 @@ public class MainActivity extends AppCompatActivity implements OnKeyboardVisibil
             }
         });
     }
+    */
 
     private final TextWatcher mWatcher = new TextWatcher() {
         boolean ignore = false;
@@ -400,10 +417,14 @@ public class MainActivity extends AppCompatActivity implements OnKeyboardVisibil
     public void format(boolean flag){
         DecimalFormat df = new DecimalFormat("0.00");
 
+        if (subTotal.getText().length() == 0){
+            subTotal.setText("0.00");
+        }
         String s = subTotal.getText().toString();
         String sTemp = "";
         Double d;
         StringBuilder builder = new StringBuilder();
+
         for (int i = 0; i < s.length(); i++){
             builder.append(s.charAt(i));
             sTemp = builder.toString();
@@ -422,6 +443,7 @@ public class MainActivity extends AppCompatActivity implements OnKeyboardVisibil
     }
 
 
+    /*
     @Override
     public void onVisibilityChanged(boolean visible) {
         if (!visible){
@@ -432,6 +454,7 @@ public class MainActivity extends AppCompatActivity implements OnKeyboardVisibil
             }
         }
     }
+    */
 
     @Override
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {

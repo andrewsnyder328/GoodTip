@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -159,7 +160,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             ratingDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(mContext, ratingsList.get(getPosition()).getRatingTitle() + " deleted.",
+                    Toast.makeText(mContext, ratingsList.get(getPosition()).getRatingTitle() + " removed.",
                             Toast.LENGTH_SHORT).show();
                     ratingsList.remove(getPosition());
                     notifyItemRemoved(getPosition());
@@ -179,10 +180,10 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                     prefsEditor.apply();
                     MainActivity.addRating.show();
                     TipCalc.updateTip(ratingsList);
-                    MainActivity.setTipColor();
                     MainActivity.suggestedTip.setText("$" + TipCalc.getTip());
                     MainActivity.tipPercent.setText("(" + TipCalc.getTipPercent(ratingsList) + "%)");
                     MainActivity.setOrderTotal();
+                    MainActivity.setTipColor();
                 }
             });
         }
@@ -213,8 +214,6 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
-        RecyclerView.ViewHolder viewHolder;
-        TextView textView;
         if (fromPosition < ratingsList.size() && toPosition < ratingsList.size()) {
             if (fromPosition < toPosition) {
                 for (int i = fromPosition; i < toPosition; i++) {
@@ -244,11 +243,17 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
         notifyItemMoved(fromPosition, toPosition);
 
+        List<Ratings> temp = new ArrayList<>();
+        for (int i = 0; i < ratingsList.size(); i++){
+            temp.add(
+                    new Ratings(temp.size(), ratingsList.get(i).getRatingTitle()));
+            temp.get(i).setRatingProgress(0);
+        }
         SharedPreferences appSharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(mContext);
         SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
         Gson gson = new Gson();
-        String json = gson.toJson(ratingsList);
+        String json = gson.toJson(temp);
         prefsEditor.putString("MyObject", json);
         prefsEditor.apply();
 
