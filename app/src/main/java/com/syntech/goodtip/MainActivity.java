@@ -43,7 +43,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements /*OnKeyboardVisibilityListener,*/ OnStartDragListener {
+public class MainActivity extends AppCompatActivity implements OnStartDragListener {
 
     static RecyclerView recyclerView;
     static EditText subTotal;
@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements /*OnKeyboardVisib
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 return false;
             }
+
         });
 
         subTotal.setOnTouchListener(new View.OnTouchListener() {
@@ -258,8 +259,6 @@ public class MainActivity extends AppCompatActivity implements /*OnKeyboardVisib
 
         subTotal.setOnEditorActionListener(new DoneOnEditorActionListener());
 
-        //setKeyboardVisibilityListener(this);
-
         tipRangeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -351,33 +350,6 @@ public class MainActivity extends AppCompatActivity implements /*OnKeyboardVisib
         return String.valueOf(a) + "% - " + String.valueOf(b) + "%";
     }
 
-    /*
-    private void setKeyboardVisibilityListener(final OnKeyboardVisibilityListener onKeyboardVisibilityListener) {
-        final View parentView = ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
-        parentView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-
-            private boolean alreadyOpen;
-            private final int defaultKeyboardHeightDP = 100;
-            private final int EstimatedKeyboardDP = defaultKeyboardHeightDP + (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? 48 : 0);
-            private final Rect rect = new Rect();
-
-            @Override
-            public void onGlobalLayout() {
-                int estimatedKeyboardHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, EstimatedKeyboardDP, parentView.getResources().getDisplayMetrics());
-                parentView.getWindowVisibleDisplayFrame(rect);
-                int heightDiff = parentView.getRootView().getHeight() - (rect.bottom - rect.top);
-                boolean isShown = heightDiff >= estimatedKeyboardHeight;
-
-                if (isShown == alreadyOpen) {
-                    return;
-                }
-                alreadyOpen = isShown;
-                onKeyboardVisibilityListener.onVisibilityChanged(isShown);
-            }
-        });
-    }
-    */
-
     private final TextWatcher mWatcher = new TextWatcher() {
         boolean ignore = false;
 
@@ -442,20 +414,6 @@ public class MainActivity extends AppCompatActivity implements /*OnKeyboardVisib
 
     }
 
-
-    /*
-    @Override
-    public void onVisibilityChanged(boolean visible) {
-        if (!visible){
-            if (subTotal.hasFocus()){
-                subTotal.clearFocus();
-            } else {
-                newRatingTitle.clearFocus();
-            }
-        }
-    }
-    */
-
     @Override
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
         mItemTouchHelper.startDrag(viewHolder);
@@ -492,14 +450,17 @@ public class MainActivity extends AppCompatActivity implements /*OnKeyboardVisib
                     item.setChecked(false);
                     editor.putBoolean("round", false);
                     round = false;
+                    suggestedTip.setText("$" + TipCalc.getTip());
 
                 } else {
                     item.setChecked(true);
                     editor.putBoolean("round", true);
                     round = true;
+                    suggestedTip.setText("$" + TipCalc.getTip());
                 }
                 setOrderTotal();
-                editor.commit();
+                setTipColor();
+                editor.apply();
 
                 return true;
             default:
@@ -523,6 +484,10 @@ public class MainActivity extends AppCompatActivity implements /*OnKeyboardVisib
         }
 
         orderTotal.setText("$" + df.format(ot));
+    }
+
+    public static Boolean isRounded(){
+        return round;
     }
 
 }

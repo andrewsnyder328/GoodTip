@@ -206,6 +206,18 @@
                         app:layout_constraintBottom_toTopOf="@+id/subTotal"
                         app:layout_constraintStart_toStartOf="@+id/subTotal" />
 
+                    <TextView
+                        android:id="@+id/textView9"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="7dp"
+                        android:text="$"
+                        android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/subTotal"
+                        app:layout_constraintEnd_toStartOf="@+id/subTotal"
+                        app:layout_constraintTop_toTopOf="@+id/subTotal" />
+
                 </android.support.constraint.ConstraintLayout>
             </android.support.v7.widget.CardView>
 

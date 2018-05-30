@@ -4,8 +4,6 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 public class TipCalc {
-    private static String twoDigitNum;
-    private static Double dTipPercent;
     private static String sTipPercent;
     private static Double dSuggestedTip;
     private static String sSuggestedTip;
@@ -40,14 +38,16 @@ public class TipCalc {
 
     public static String getTip(){
         DecimalFormat df = new DecimalFormat("0.00");
-        return df.format(Double.valueOf(sSuggestedTip));
-    }
+        if (MainActivity.isRounded()){
+            double rnd;
+            double dif;
+            rnd = Math.ceil(Double.valueOf(MainActivity.subTotal.getText().toString()));
+            dif = rnd - Double.valueOf(MainActivity.subTotal.getText().toString());
+            return df.format(Math.round(dSuggestedTip)+dif);
+        } else {
+            return df.format(dSuggestedTip);
+        }
 
-    public static double getTipValue(){
-        dSuggestedTip = dSuggestedTip*100;
-        dSuggestedTip = (double) Math.round(dSuggestedTip);
-        dSuggestedTip = dSuggestedTip /100;
-        return dSuggestedTip;
     }
 
     public static String getTipPercent(List<Ratings> ratings){
